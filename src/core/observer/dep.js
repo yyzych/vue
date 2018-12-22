@@ -55,6 +55,10 @@ export default class Dep {
 Dep.target = null
 const targetStack = []
 
+/**
+ * @ych
+ * _target: 观察者对象(watcher)
+ */
 export function pushTarget (_target: ?Watcher) {
   if (Dep.target) targetStack.push(Dep.target)
   Dep.target = _target

@@ -20,6 +20,10 @@ declare interface Component {
   static FunctionalRenderContext: Function;
 
   // public properties
+  /**
+   * @ych
+   * any表示任何类型，告诉flow不要检查我
+   */
   $el: any; // so that we can attach __vue__ to it
   $data: Object;
   $props: Object;

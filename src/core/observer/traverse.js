@@ -24,6 +24,14 @@ function _traverse (val: any, seen: SimpleSet) {
   }
   if (val.__ob__) {
     const depId = val.__ob__.dep.id
+    /**
+     * @ych
+     * 防止循环引用，如下情况
+     * const obj1 = {}
+     * const obj2 = {}
+     * obj1.data = obj2
+     * obj2.data = obj1
+     */
     if (seen.has(depId)) {
       return
     }
@@ -31,6 +39,10 @@ function _traverse (val: any, seen: SimpleSet) {
   }
   if (isA) {
     i = val.length
+    /**
+     * @ych
+     * val[i], val[keys[i]]会触发子属性的 get 拦截器函数，保证子属性能够收集到观察者
+     */
     while (i--) _traverse(val[i], seen)
   } else {
     keys = Object.keys(val)

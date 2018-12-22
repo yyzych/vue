@@ -34,6 +34,19 @@ const resolve = p => {
   }
 }
 
+/*
+ * @ych 
+ * 
+ * 完整版 = 运行时版 + Compiler
+ * 完整版比运行时版多一个Compiler，用来对字符串模版编译为render函数
+ * 字符串模版可以在运行时编译，也可以在项目构建的过程中编译，提升性能
+ * 将Compiler抽离为单独的包，减小文件体积（都是单文件组件的模式就不需要对字符串模版进行编译，不需要导入）
+ *
+ * cjs,es,umd不同的模块标准
+ * umd 是使得你可以直接使用 <script> 标签引用Vue的模块形式
+ * cjs 形式的模块就是为 browserify 和 webpack 1 提供的，他们在加载模块的时候不能直接加载 ES Module
+ * es 提供给webpack2+以及Rollup，它们支持es模块
+ */
 const builds = {
   // Runtime only (CommonJS). Used by bundlers e.g. Webpack & Browserify
   'web-runtime-cjs': {

@@ -6,6 +6,10 @@ import { lifecycleMixin } from './lifecycle'
 import { warn } from '../util/index'
 
 function Vue (options) {
+	/**
+	 * @ych
+	 * 非环境下，如果不使用new操作符调用，提示警告
+	 */
   if (process.env.NODE_ENV !== 'production' &&
     !(this instanceof Vue)
   ) {

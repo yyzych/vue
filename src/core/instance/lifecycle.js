@@ -25,8 +25,18 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  /**
+   * @ych
+   * options.parent: components 下注册的子组件的父实例
+   * options.abstract: 是否是抽象组件。抽象组件不渲染真实DOM。如keep-alive 或者 transition
+   */
   let parent = options.parent
   if (parent && !options.abstract) {
+    /**
+     * @ych
+     * 查找第一个非抽象的父组件。
+     * 如果父级时抽象组件则不会出现在父子关系的路径
+     */
     while (parent.$options.abstract && parent.$parent) {
       parent = parent.$parent
     }
@@ -179,6 +189,11 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    /**
+     * @ych
+     * vm._render 函数的作用是调用 vm.$options.render 函数并返回生成的虚拟节点(vnode)
+     * vm._update 函数的作用是把 vm._render 函数生成的虚拟节点渲染成真正的 DOM
+     */
     updateComponent = () => {
       vm._update(vm._render(), hydrating)
     }
@@ -325,6 +340,15 @@ export function callHook (vm: Component, hook: string) {
       }
     }
   }
+  /**
+   * @ych
+   * <child
+   *   @hook:beforeCreate="handleChildBeforeCreate"
+   *   @hook:created="handleChildCreated"
+   *   @hook:mounted="handleChildMounted"
+   *   @hook:生命周期钩子
+   * />
+   */
   if (vm._hasHookEvent) {
     vm.$emit('hook:' + hook)
   }

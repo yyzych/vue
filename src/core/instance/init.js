@@ -90,8 +90,20 @@ export function initInternalComponent (vm: Component, options: InternalComponent
   }
 }
 
+/**
+ * @ych
+ * 各个options代表什么?
+ * options
+ * superOptions
+ * extendOptions
+ * sealedOptions
+ */
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
+  /**
+   * @ych
+   * 使用Vue.extend构造出的构造函数才有super属性
+   */
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions

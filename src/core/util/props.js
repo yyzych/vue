@@ -28,6 +28,14 @@ export function validateProp (
   const absent = !hasOwn(propsData, key)
   let value = propsData[key]
   // boolean casting
+  /**
+   * @ych
+   * 对 prop 的类型为布尔值时的特殊处理
+   * <some-comp prop1="" />
+   * <some-comp prop2 />
+   * <some-comp someProp="some-prop" />
+   * prop1, prop2, someProp都为true
+   */
   const booleanIndex = getTypeIndex(Boolean, prop.type)
   if (booleanIndex > -1) {
     if (absent && !hasOwn(prop, 'default')) {
@@ -36,6 +44,11 @@ export function validateProp (
       // only cast empty string / same name to boolean if
       // boolean has higher priority
       const stringIndex = getTypeIndex(String, prop.type)
+      /**
+       * @ych
+       * 1. 没有定义 String 类型
+       * 2. 虽然定义了 String 类型，但是 String 类型的优先级没有 Boolean 高
+       */
       if (stringIndex < 0 || booleanIndex < stringIndex) {
         value = true
       }
@@ -159,6 +172,12 @@ function assertType (value: any, type: Function): {
     valid = t === expectedType.toLowerCase()
     // for primitive wrapper objects
     if (!valid && t === 'object') {
+      /**
+       * @ych
+       * 基本包装类型，需要做进一步的检查
+       * const str = new String('基本包装类型')
+       * typeof str 结果为 object
+       */
       valid = value instanceof type
     }
   } else if (expectedType === 'Object') {

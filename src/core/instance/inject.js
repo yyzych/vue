@@ -16,6 +16,10 @@ export function initProvide (vm: Component) {
 export function initInjections (vm: Component) {
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
+    /**
+     * @ych
+     * toggleObserving(false) 会导致使用 defineReactive 定义属性时不会将该**属性的值**转换为响应式的
+     */
     toggleObserving(false)
     Object.keys(result).forEach(key => {
       /* istanbul ignore else */
@@ -50,6 +54,10 @@ export function resolveInject (inject: any, vm: Component): ?Object {
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
       const provideKey = inject[key].from
+      /**
+       * @ych
+       * 一开始source为当前vm，当即使当前vm定义的provide里面有对应的key，也不会取到，因为initInject在initProvide之前调用，此时它自身的provide对象还没有构建
+       */
       let source = vm
       while (source) {
         if (source._provided && hasOwn(source._provided, provideKey)) {

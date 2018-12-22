@@ -21,6 +21,10 @@ export type Config = {
   keyCodes: { [key: string]: number | Array<number> };
 
   // platform
+  /**
+   * @ych
+   * 由自个平台决定
+   */
   isReservedTag: (x?: string) => boolean;
   isReservedAttr: (x?: string) => boolean;
   parsePlatformTagName: (x: string) => string;
@@ -59,6 +63,14 @@ export default ({
 
   /**
    * Whether to record perf
+   */
+  /**
+   * @ych
+   * 是否开启性能追踪。可追踪4个场景：
+   * 1. 组件初始化
+   * 2. 编译。将模版编译为渲染函数
+   * 3. 渲染。渲染函数的性能，即执行且生成虚拟DOM的性能
+   * 4. 打补丁。将DOM渲染为真实DOM的性能
    */
   performance: false,
 

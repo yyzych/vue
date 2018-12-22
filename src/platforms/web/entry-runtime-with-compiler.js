@@ -97,4 +97,11 @@ function getOuterHTML (el: Element): string {
 
 Vue.compile = compileToFunctions
 
+/**
+ * @ych
+ * 带complier版本
+ * 1. 重写Vue.prototype.$mount
+ * 2. 增加了全局complie方法
+ */
+
 export default Vue

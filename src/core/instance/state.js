@@ -70,10 +70,19 @@ function initProps (vm: Component, propsOptions: Object) {
   const isRoot = !vm.$parent
   // root instance props should be converted
   if (!isRoot) {
+    /**
+     * @ych
+     * 在定义 props 数据时，不将 prop 值转换为响应式数据
+     */
     toggleObserving(false)
   }
   for (const key in propsOptions) {
     keys.push(key)
+    /**
+     * @ych
+     * 校验并从propsData得到该key的值
+     * propsData: 附件传给组件的值
+     */
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
@@ -153,6 +162,10 @@ function initData (vm: Component) {
 
 export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
+  /**
+   * @ych
+   * 为了防止使用 props 数据**初始化 data 数据时**收集冗余的依赖
+   */
   pushTarget()
   try {
     return data.call(vm, vm)
@@ -244,6 +257,26 @@ function createComputedGetter (key) {
   return function computedGetter () {
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
+      /**
+       * @ych
+       * evaluate的调用会触发计算属性的get（用户自定义的那个函数），里面又会访问数据属性，此时就会把计算属性观察者收集到数据属性的依赖框中
+       * depend的调用会触发把渲染函数观察者收集到计算属性的依赖框中
+       * 
+       * 
+       * 最开始
+       *   Dep.target为渲染函数观察者Dep.target为渲染函数观察者
+       * 经过(调用栈)
+       *   [watcher.evaluate]的执行会调用=>
+       *     [watcher.get (watcher.get会把当前water作为Dep.target，也就是当前的计算属性观察者)]，它的执行又会调用=>
+       *       [真正的用户自定义的计算属性的那个函数(该函数会访问数据属性，触发数据属性的get拦截器函数，将Dep.target收集到自身的依赖框)] =>
+       *     [watcher.get执行完前会popTarget，把Dep.target还原回渲染函数观察者]
+       * 现在
+       *   Dep.target又为渲染函数观察者，s所以watcher.depend调用收集到的是渲染函数观察者
+       *   
+       * 
+       * 本质上计算属性观察者对象就是一个桥梁，它搭建在响应式数据与渲染函数观察者中间
+       * 如果计算属性 compA 依赖了数据对象的 a 属性，那么属性 a 将收集计算属性 compA 的 计算属性观察者对象，而 计算属性观察者对象 将收集 渲染函数观察者对象
+       */
       if (watcher.dirty) {
         watcher.evaluate()
       }

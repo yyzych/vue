@@ -25,6 +25,19 @@ import {
  * how to merge a parent option value and a child option
  * value into the final value.
  */
+/**
+ * @ych
+ * 所有的选项合并策略函数。
+ * 对于 el、propsData 选项使用默认的合并策略 defaultStrat。
+ * 对于 data 选项，使用 mergeDataOrFn 函数进行处理，最终结果是 data 选项将变成一个函数，且该函数的执行结果为真正的数据对象。
+ * 对于 生命周期钩子 选项，将合并成数组，使得父子选项中的钩子函数都能够被执行
+ * 对于 directives、filters 以及 components 等资源选项，父子选项将以原型链的形式被处理，正是因为这样我们才能够在任何地方都使用内置组件、指令等。
+ * 对于 watch 选项的合并处理，类似于生命周期钩子，如果父子选项都有相同的观测字段，将被合并为数组，这样观察者都将被执行。
+ * 对于 props、methods、inject、computed 选项，父选项始终可用，但是子选项会覆盖同名的父选项字段。
+ * 对于 provide 选项，其合并策略使用与 data 选项相同的 mergeDataOrFn 函数。
+ * 最后，以上没有提及到的选项都将使默认选项 defaultStrat。
+ * 最最后，默认合并策略函数 defaultStrat 的策略是：只要子选项不是 undefined 就使用子选项，否则使用父选项。
+ */
 const strats = config.optionMergeStrategies
 
 /**
@@ -107,6 +120,12 @@ export function mergeDataOrFn (
   }
 }
 
+/**
+ * @ych
+ * 返回一个函数。在初始化是才执行，这时生成了数据对象。返回函数的原因：
+ * 1. 保证所有组件实例的data对象独一无二
+ * 2. 为了能取得props, inject中的数据，如果此刻就执行则取不到了。（props, inject的初始化先于 data 选项的初始化）
+ */
 strats.data = function (
   parentVal: any,
   childVal: any,
@@ -282,6 +301,10 @@ function normalizeProps (options: Object, vm: ?Component) {
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
+        /**
+         * @ych
+         * 转驼峰格式
+         */
         name = camelize(val)
         res[name] = { type: null }
       } else if (process.env.NODE_ENV !== 'production') {
@@ -362,6 +385,11 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
  */
+/**
+ * @ych
+ * parent: 构造函数的options
+ * child：实例化时我们传进去的options。也可以是Vue或Vue.extend生成的构造函数
+ */
 export function mergeOptions (
   parent: Object,
   child: Object,
@@ -375,6 +403,17 @@ export function mergeOptions (
     child = child.options
   }
 
+  /**
+   * @ych
+   * 规范值。如props有支持两种写法，但是在内部统一为一个格式
+   * props: ['someData']
+   * props: {
+   *  someData: {
+   *    type: Number,
+   *    default: 0
+   *  }
+   * }
+   */
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)

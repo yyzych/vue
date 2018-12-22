@@ -34,6 +34,11 @@ let useMacroTask = false
 // in IE. The only polyfill that consistently queues the callback after all DOM
 // events triggered in the same loop is by using MessageChannel.
 /* istanbul ignore if */
+/**
+ * @ych
+ * setImmediate, MessageChannel??
+ * microtask, (macro)task,(调用栈、任务队列、事件循环)??
+ */
 if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   macroTimerFunc = () => {
     setImmediate(flushCallbacks)
@@ -58,6 +63,11 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
 
 // Determine microtask defer implementation.
 /* istanbul ignore next, $flow-disable-line */
+/**
+ * @ych
+ * 是否支持原生的 Promise，如果支持则优先使用 Promise 注册 microtask
+ * 不支持降级为setTimeout、setInterval 以及 setImmediate 等来注册(macro)task
+ */
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   const p = Promise.resolve()
   microTimerFunc = () => {
@@ -87,6 +97,10 @@ export function withMacroTask (fn: Function): Function {
   })
 }
 
+/**
+ * @ych
+ * ch不传时，可以以promise.then形式调用再传入
+ */
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => {

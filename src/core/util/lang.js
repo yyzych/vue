@@ -23,6 +23,10 @@ export function def (obj: Object, key: string, val: any, enumerable?: boolean) {
 /**
  * Parse simple path.
  */
+/**
+ * @ych
+ * 排除名字不合法的，如：obj~a、obj/a、obj*a
+ */
 const bailRE = /[^\w.$]/
 export function parsePath (path: string): any {
   if (bailRE.test(path)) {
@@ -32,6 +36,10 @@ export function parsePath (path: string): any {
   return function (obj) {
     for (let i = 0; i < segments.length; i++) {
       if (!obj) return
+      /**
+       * @ych
+       * 触发了数据属性的 get 拦截器函数
+       */
       obj = obj[segments[i]]
     }
     return obj

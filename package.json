@@ -2,8 +2,8 @@
   "name": "vue",
   "version": "2.5.17-beta.0",
   "description": "Reactive, component-oriented view layer for modern web interfaces.",
-  "main": "dist/vue.runtime.common.js",
-  "module": "dist/vue.runtime.esm.js",
+  "main": "dist/vue.runtime.common.js", // 运行时版本，cjs模块
+  "module": "dist/vue.runtime.esm.js", // 运行时版本，es模块
   "unpkg": "dist/vue.js",
   "jsdelivr": "dist/vue.js",
   "typings": "types/index.d.ts",
@@ -14,7 +14,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "dev": "rollup -w -c scripts/config.js --environment TARGET:web-full-dev",
+    "dev": "rollup -w -c scripts/config.js --environment TARGET:web-full-dev", //  构建完整版 umd 模块的 Vue
     "dev:cjs": "rollup -w -c scripts/config.js --environment TARGET:web-runtime-cjs",
     "dev:esm": "rollup -w -c scripts/config.js --environment TARGET:web-runtime-esm",
     "dev:test": "karma start test/unit/karma.dev.config.js",

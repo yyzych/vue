@@ -16,6 +16,11 @@ const queue: Array<Watcher> = []
 const activatedChildren: Array<Component> = []
 let has: { [key: number]: ?true } = {}
 let circular: { [key: number]: number } = {}
+/**
+ * @ych
+ * flushing:正在执行更新
+ * waiting:
+ */
 let waiting = false
 let flushing = false
 let index = 0
@@ -127,6 +132,7 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
+
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
@@ -143,6 +149,10 @@ export function queueWatcher (watcher: Watcher) {
       queue.splice(i + 1, 0, watcher)
     }
     // queue the flush
+    /**
+     * @ych
+     * waiting为真时，watcher可以加入队列但不会再次执行
+     */
     if (!waiting) {
       waiting = true
 
