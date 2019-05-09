@@ -50,7 +50,21 @@ function decodeAttr (value, shouldDecodeNewlines) {
   return value.replace(re, match => decodingMap[match])
 }
 
+/**
+ * @ych
+ * 词法分析
+ * 用正则一点一点解析字符串流，每当遇到一个特定的 token(开始标签，结束标签，文本内容等) 时都会调用相应的钩子函数，同时将有用的参数传递过去。
+ */
 export function parseHTML (html, options) {
+  /**
+   * @ych
+   * stack: 解析时存储标签数组，用来判断是否标签未闭合
+   * isUnaryTag: 是否为一元标签
+   * canBeLeftOpenTag: 省略闭合标签的非一元标签
+   * index: 当前字符流的读入位置
+   * last: 剩余还未解析的 html 字符串
+   * lastTag: stack 栈顶的元素
+   */
   const stack = []
   const expectHTML = options.expectHTML
   const isUnaryTag = options.isUnaryTag || no
@@ -63,6 +77,16 @@ export function parseHTML (html, options) {
     if (!lastTag || !isPlainTextElement(lastTag)) {
       let textEnd = html.indexOf('<')
       if (textEnd === 0) {
+        /**
+         * @ych
+         * textEnd为0有以下几种情况
+         * 1、可能是注释节点：<!-- -->
+         * 2、可能是条件注释节点：<![ ]>
+         * 3、可能是 doctype：<!DOCTYPE >
+         * 4、可能是结束标签：</xxx>
+         * 5、可能是开始标签：<xxx>
+         * 6、可能只是一个单纯的字符串：<abcdefg
+         */
         // Comment:
         if (comment.test(html)) {
           const commentEnd = html.indexOf('-->')
@@ -191,6 +215,10 @@ export function parseHTML (html, options) {
       }
       advance(start[0].length)
       let end, attr
+      /**
+       * @ych
+       * 没有匹配到开始标签的结束部分，并且匹配到了开始标签中的属性，这个时候循环体将被执行，直到遇到开始标签的结束部分为止
+       */
       while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
         advance(attr[0].length)
         match.attrs.push(attr)
@@ -243,6 +271,12 @@ export function parseHTML (html, options) {
     }
   }
 
+  /**
+   * @ych
+   * 检测是否缺少闭合标签
+   * 处理 stack 栈中剩余的标签
+   * 解析 </br> 与 </p> 标签，与浏览器的行为相同
+   */
   function parseEndTag (tagName, start, end) {
     let pos, lowerCasedTagName
     if (start == null) start = index

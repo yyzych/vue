@@ -141,6 +141,10 @@ export function lifecycleMixin (Vue: Class<Component>) {
   }
 }
 
+/**
+ * @ych
+ * 挂载组件
+ */
 export function mountComponent (
   vm: Component,
   el: ?Element,

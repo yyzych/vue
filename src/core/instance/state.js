@@ -164,7 +164,8 @@ export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
   /**
    * @ych
-   * 为了防止使用 props 数据**初始化 data 数据时**收集冗余的依赖
+   * 为了防止使用 props 数据**初始化 data 数据时**props中的属性收集冗余的依赖
+   * 因为此时是初始化data数据，不需要在props中的属性改变时再次执行
    */
   pushTarget()
   try {
@@ -271,7 +272,7 @@ function createComputedGetter (key) {
        *       [真正的用户自定义的计算属性的那个函数(该函数会访问数据属性，触发数据属性的get拦截器函数，将Dep.target收集到自身的依赖框)] =>
        *     [watcher.get执行完前会popTarget，把Dep.target还原回渲染函数观察者]
        * 现在
-       *   Dep.target又为渲染函数观察者，s所以watcher.depend调用收集到的是渲染函数观察者
+       *   Dep.target又为渲染函数观察者，所以watcher.depend调用收集到的是渲染函数观察者
        *   
        * 
        * 本质上计算属性观察者对象就是一个桥梁，它搭建在响应式数据与渲染函数观察者中间

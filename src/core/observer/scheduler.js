@@ -19,7 +19,7 @@ let circular: { [key: number]: number } = {}
 /**
  * @ych
  * flushing:正在执行更新
- * waiting:
+ * waiting:已启动了一次刷新队列的动作
  */
 let waiting = false
 let flushing = false
@@ -151,6 +151,7 @@ export function queueWatcher (watcher: Watcher) {
     // queue the flush
     /**
      * @ych
+     * 通过nextTick创建一个微任务，下一次事件循环时执行，循环队列中的所有观察者进行更新；且在执行之前，可以继续添加观察者到队列中，但不会再调用nextTick创建微任务
      * waiting为真时，watcher可以加入队列但不会再次执行
      */
     if (!waiting) {

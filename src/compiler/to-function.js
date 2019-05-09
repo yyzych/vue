@@ -33,6 +33,11 @@ export function createCompileToFunctionFn (compile: Function): Function {
     if (process.env.NODE_ENV !== 'production') {
       // detect possible CSP restriction
       try {
+        /**
+         * @ych
+         * CSP 全称是内容安全策略
+         * 检测 new Function() 是否可用
+         */
         new Function('return 1')
       } catch (e) {
         if (e.toString().match(/unsafe-eval|CSP/)) {

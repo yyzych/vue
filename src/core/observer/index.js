@@ -204,7 +204,7 @@ export function defineReactive (
         /**
          * @ych
          * dep.depend()： 收集依赖到该属性的dep中
-         * childOb.dep.depend()： 将同样的依赖也收集一份到childOb.dep中
+         * childOb.dep.depend()： 将同样的依赖也收集一份到childOb.dep中。注意：dep是通过闭包引用的，childOb.dep是通过Observer对象引用的
          * 对该属性的修改（通过setter）能出发依赖，
          * 但是如果值是一个对象，给对象增加/删除一个属性是不能触发依赖的。
          * 必须通过Vue.set API才能触发依赖，依赖记录在childOb.dep中

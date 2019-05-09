@@ -115,6 +115,10 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     start (tag, attrs, unary) {
+      /**
+       * @ych
+       * ns的值可能为math, svg两种
+       */
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
@@ -130,6 +134,11 @@ export function parse (
         element.ns = ns
       }
 
+      /**
+       * @ych
+       * 1、<style> 标签为被禁止的标签
+       * 2、没有指定 type 属性或虽然指定了 type 属性但其值为 text/javascript 的 <script> 标签被认为是被禁止的
+       */ 
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true
         process.env.NODE_ENV !== 'production' && warn(
@@ -164,6 +173,11 @@ export function parse (
         processElement(element, options)
       }
 
+      /**
+       * @ych
+       * 必须有且仅有一个根元素
+       * slot 和 template本身不渲染，且都不能保证他的子元素为1个元素
+       */ 
       function checkRootConstraints (el) {
         if (process.env.NODE_ENV !== 'production') {
           if (el.tag === 'slot' || el.tag === 'template') {
